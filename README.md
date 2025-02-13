@@ -13,10 +13,10 @@ The main objective of netmap is to provide an easy-to-use network visualization 
 ## Features
 
 ### Core Features:
-	•	Network Map Visualization: Display the network as an interactive map, with nodes representing devices or servers and edges representing connections.
-	•	Traceroute Integration: Visualize the path packets take across the network with information about intermediate nodes.
-	•	Ping Highlighting: Easily highlight nodes based on ping responses for quick diagnostics.
-	•	DNS Resolution: Show hostnames alongside IP addresses for easier identification of nodes.
+•	Network Map Visualization: Display the network as an interactive map, with nodes representing devices or servers and edges representing connections.
+•	Traceroute Integration: Visualize the path packets take across the network with information about intermediate nodes.
+•	Ping Highlighting: Easily highlight nodes based on ping responses for quick diagnostics.
+•	DNS Resolution: Show hostnames alongside IP addresses for easier identification of nodes.
 
 ### Upcoming Features:
 #### Local Network Visualization
