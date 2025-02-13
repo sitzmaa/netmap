@@ -37,6 +37,12 @@ Plan to integrate with Wireshark for the ability to:
 	•	Highlight packet capture data
 	•	Provide visual graphs based on Wireshark capture analysis
 
+### Longterm Goals
+
+Container deployment for network hosted backend with a python interface
+
+Automated probing of networks for expansive mapping
+
 ## Installation
 1.	Clone the repository:
  ``` bash
