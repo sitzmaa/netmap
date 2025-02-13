@@ -36,6 +36,12 @@ Create a network map for scanned public gateways using:
 Plan to integrate with Wireshark for the ability to:
 	•	Highlight packet capture data
 	•	Provide visual graphs based on Wireshark capture analysis
+#### Requests and parsing
+Request HTML files from domains and view them in built in browser
+
+Create and tune request packets
+
+
 
 ### Longterm Goals
 
