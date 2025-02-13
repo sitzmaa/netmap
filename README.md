@@ -38,18 +38,18 @@ Plan to integrate with Wireshark for the ability to:
 	•	Provide visual graphs based on Wireshark capture analysis
 
 ## Installation
-	1.	Clone the repository:
+1.	Clone the repository:
  ``` bash
 git clone https://github.com/yourusername/netmap.git
 cd netmap
  ```
-  2.	Create a virtual environment (optional but recommended):
+2.	Create a virtual environment (optional but recommended):
   ``` bash
   python3 -m venv venv
   source venv/bin/activate   # For Linux/macOS
   venv\Scripts\activate      # For Windows
   ```
-  3.	Install the required dependencies:
+3.	Install the required dependencies:
   ``` bash
   pip install -r requirements.txt
   ```
