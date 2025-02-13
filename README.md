@@ -19,17 +19,17 @@ The main objective of netmap is to provide an easy-to-use network visualization 
 	•	DNS Resolution: Show hostnames alongside IP addresses for easier identification of nodes.
 
 ### Upcoming Features:
-	#### Local Network Visualization
+#### Local Network Visualization
 Visualize devices on your local network, displaying details like:
 	•	Local IP addresses
 	•	DNS names (if available)
  
-	#### Public Network Visualization
+#### Public Network Visualization
 Create a network map for scanned public gateways using:
 	•	DNS and IP information
 	•	Traceroute paths
  
-	####	Wireshark Integration
+#### Wireshark Integration
 Plan to integrate with Wireshark for the ability to:
 	•	Highlight packet capture data
 	•	Provide visual graphs based on Wireshark capture analysis
