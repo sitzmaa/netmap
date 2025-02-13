@@ -1,0 +1,36 @@
+name: Python Testing Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Choose the appropriate runner (Ubuntu in this case)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # Use the appropriate Python version
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          source venv/bin/activate
+          pytest  # Or use `python -m unittest` if you use unittest
+        continue-on-error: false  # Fail the workflow if tests fail
