@@ -39,9 +39,16 @@ Plan to integrate with Wireshark for the ability to:
 
 ### Longterm Goals
 
-Container deployment for network hosted backend with a python interface
+#### Container deployment 
+Docker and podman support for network hosted backend with a python interface
 
-Automated probing of networks for expansive mapping
+Javascript web server fnctionality to allow easy status checks
+
+#### Automated probing of networks
+
+#### Packaging
+Create official packages for release
+
 
 ## Installation
 1.	Clone the repository:
