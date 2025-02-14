@@ -26,7 +26,7 @@ std::string parse_hop_count(const std::string& response) {
     return "Total Hops: " + std::to_string(hop_count) + "\n";
 }
 
-std::string parse_ips(const std::string& response) {
+std::string parse_ips(std::string response) {
     std::regex re("\\b(\\d+\\.\\d+\\.\\d+\\.\\d+)\\b");
     std::smatch match;
     std::string result = "Traceroute IPs: ";
