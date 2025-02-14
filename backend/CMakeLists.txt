@@ -30,10 +30,10 @@ find_package(nlohmann_json REQUIRED)
 include_directories(${nlohmann_json_INCLUDE_DIRS})
 
 # Add the libraries
-add_library(traceroute src/utilities/traceroute.cpp)
-add_library(ping src/utilities/ping.cpp)
-add_library(dns_lookup src/utilities/dns_lookup.cpp)
-add_library(network_scan src/utilities/network_scan.cpp)
+add_library(traceroute src/utilities/traceroute_x.cpp)
+add_library(ping src/utilities/ping_x.cpp)
+add_library(dig src/utilities/dig_x.cpp)
+add_library(nmap src/utilities/nmap_x.cpp)
 add_library(server src/network_server.cpp)
 target_link_libraries(server ${Boost_LIBRARIES})
 
@@ -45,7 +45,7 @@ target_link_libraries(netmap_backend
     server
     traceroute
     ping
-    dns_lookup
-    network_scan
+    dig
+    nmap
     nlohmann_json::nlohmann_json
 )

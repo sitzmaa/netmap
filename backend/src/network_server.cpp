@@ -16,7 +16,6 @@ void NetworkServer::start() {
 
 void NetworkServer::handle_client(tcp::socket socket) {
     try {
-        std::cout << "Client connected" << std::endl;
 
         // Read initial message to determine client type
         asio::streambuf buffer;
