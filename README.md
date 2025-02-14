@@ -99,7 +99,8 @@ cd netmap
 
 To launch the graphical user interface (GUI) and start visualizing networks:
 ``` bash
-python3 run.py
+./build.sh -cs
+python3 -m core.run
 ```
 
 ## Contributing
