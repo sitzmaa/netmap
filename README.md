@@ -55,6 +55,12 @@ Javascript web server fnctionality to allow easy status checks
 #### Packaging
 Create official packages for release
 
+#### Storage Efficiency
+
+Currently the persistant storage is in the form of JSON
+
+-- Look into if SQLite would work better
+
 
 ## Installation
 1.	Clone the repository:
@@ -66,12 +72,12 @@ cd netmap
 	
 	Mac-OS
 	``` bash
-	brew install boost nlohmann-json
+	brew install boost nlohmann-json tinyxml2
 	```
 
 	Debian
 	``` bash
-	sudo apt install nlohmann-json3-dev boost
+	sudo apt install nlohmann-json3-dev boost libtinyxml2.6.2-dev
 	```
 
 	-- the boost library is required for the ASIO library to work with CMake, however ASIO is also included with Clang if you would rather use that
@@ -93,7 +99,8 @@ cd netmap
 
 To launch the graphical user interface (GUI) and start visualizing networks:
 ``` bash
-python3 run.py
+./build.sh -cs
+python3 -m core.run
 ```
 
 ## Contributing

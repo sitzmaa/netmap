@@ -1,6 +1,20 @@
 #include "network_server.hpp"
+#include "commands.hpp"  // Universal import for all command header files
 #include <iostream>
+#include <sstream>
+#include <vector>
 #include <asio.hpp>
+
+// Function to parse command input into a vector of arguments
+std::vector<std::string> parse_command(const std::string& input) {
+    std::vector<std::string> tokens;
+    std::istringstream iss(input);
+    std::string token;
+    while (iss >> token) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
 
 NetworkServer::NetworkServer(short port) 
     : io_context(), acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {}
@@ -16,13 +30,9 @@ void NetworkServer::start() {
 
 void NetworkServer::handle_client(tcp::socket socket) {
     try {
-        std::cout << "Client connected" << std::endl;
-
-        // Read initial message to determine client type
         asio::streambuf buffer;
         asio::read_until(socket, buffer, "\n");
         std::istream input(&buffer);
-
         std::string client_type;
         std::getline(input, client_type);
 
@@ -53,18 +63,36 @@ void NetworkServer::handle_cli(tcp::socket socket) {
             std::string command;
             std::getline(input, command);
 
-            if (command == "ping") {
-                send_response(socket, "Pinging the network...");
-            } 
-            else if (command == "traceroute") {
-                send_response(socket, "Running traceroute...");
-            } 
-            else if (command == "exit") {
+            if (command == "exit") {
                 break;
-            } 
-            else {
-                send_response(socket, "Unknown CLI command");
             }
+
+            std::vector<std::string> args = parse_command(command);
+            if (args.empty()) {
+                send_response(socket, "Invalid command");
+                continue;
+            }
+
+            std::string response;
+            std::string cmd = args[0];
+
+            if (cmd == "ping") {
+                response = Ping::run(args);
+            } 
+            else if (cmd == "traceroute") {
+                response = Traceroute::run(args);
+            } 
+            else if (cmd == "nmap") {
+                response = Nmap::run(args);
+            }
+            else if (cmd == "dig") {
+                response = Dig::run(args);
+            }
+            else {
+                response = "Unknown CLI command";
+            }
+
+            send_response(socket, response);
         }
     } catch (const std::exception& e) {
         std::cerr << "CLI client error: " << e.what() << std::endl;
@@ -78,22 +106,14 @@ void NetworkServer::handle_gui(tcp::socket socket) {
             asio::read_until(socket, buffer, "\n");
 
             std::istream input(&buffer);
-            std::string request;
-            std::getline(input, request);
+            std::string gui_data;
+            std::getline(input, gui_data);
 
-            // GUI messages might be JSON or structured differently
-            if (request == "get_network_state") {
-                send_response(socket, "{ \"status\": \"ok\", \"message\": \"Network state fetched\" }");
-            } 
-            else if (request == "highlight_node") {
-                send_response(socket, "{ \"status\": \"ok\", \"message\": \"Node highlighted\" }");
-            } 
-            else if (request == "exit") {
+            if (gui_data == "exit") {
                 break;
-            } 
-            else {
-                send_response(socket, "{ \"status\": \"error\", \"message\": \"Unknown GUI request\" }");
             }
+
+            std::cout << "Received GUI data: " << gui_data << std::endl;
         }
     } catch (const std::exception& e) {
         std::cerr << "GUI client error: " << e.what() << std::endl;
