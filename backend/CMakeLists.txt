@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add the include directories for libraries
 include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include/utilities)
 include_directories(${CMAKE_SOURCE_DIR}/externals)
 
 # Importing Boost

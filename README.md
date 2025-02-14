@@ -55,6 +55,12 @@ Javascript web server fnctionality to allow easy status checks
 #### Packaging
 Create official packages for release
 
+#### Storage Efficiency
+
+Currently the persistant storage is in the form of JSON
+
+-- Look into if SQLite would work better
+
 
 ## Installation
 1.	Clone the repository:
