@@ -56,3 +56,21 @@ std::string ping_x(const std::string& ip, int options) {
 
     return result.empty() ? "No matching ping results\n" : result;
 }
+
+std::string Ping::run(const std::vector<std::string>& args) {
+    if (args.size() < 2) {
+        return "Usage: ping_x <IP> [options]\nOptions: --latency --loss --ttl --ip\n";
+    }
+
+    std::string ip = args[1];
+    int options = 0;
+    
+    for (size_t i = 2; i < args.size(); ++i) {
+        if (args[i] == "--latency") options |= PING_LATENCY;
+        else if (args[i] == "--loss") options |= PING_PACKET_LOSS;
+        else if (args[i] == "--ttl") options |= PING_TTL;
+        else if (args[i] == "--ip") options |= PING_IP;
+    }
+    
+    return ping_x(ip, options);
+}

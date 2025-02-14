@@ -49,3 +49,20 @@ std::string traceroute_x(const std::string& target, int options) {
 
     return result.empty() ? "No matching traceroute results\n" : result;
 }
+
+std::string Traceroute::run(const std::vector<std::string>& args) {
+    if (args.size() < 2) {
+        return "Usage: traceroute_x <target> [options]\nOptions: --hops --latency --ips\n";
+    }
+
+    std::string target = args[1];
+    int options = 0;
+    
+    for (size_t i = 2; i < args.size(); ++i) {
+        if (args[i] == "--hops") options |= TRACE_HOPS;
+        else if (args[i] == "--latency") options |= TRACE_LATENCY;
+        else if (args[i] == "--ips") options |= TRACE_IPS;
+    }
+
+    return traceroute_x(target, options);
+}
