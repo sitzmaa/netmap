@@ -36,6 +36,25 @@ Create a network map for scanned public gateways using:
 Plan to integrate with Wireshark for the ability to:
 	•	Highlight packet capture data
 	•	Provide visual graphs based on Wireshark capture analysis
+#### Requests and parsing
+Request HTML files from domains and view them in built in browser
+
+Create and tune request packets
+
+
+
+### Longterm Goals
+
+#### Container deployment 
+Docker and podman support for network hosted backend with a python interface
+
+Javascript web server fnctionality to allow easy status checks
+
+#### Automated probing of networks
+
+#### Packaging
+Create official packages for release
+
 
 ## Installation
 1.	Clone the repository:
