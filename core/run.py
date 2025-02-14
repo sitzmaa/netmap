@@ -36,7 +36,7 @@ def main():
     time.sleep(0.5)
     if not args.server_only:
         if not args.no_cli:
-            cli_cmd = f"python3 ./frontend/cli.py --port {port}"
+            cli_cmd = f"./frontend/netmap_cli/build/netmap_cli -H localhost {port}"
             open_terminal(cli_cmd)
 
         if not args.no_gui:
