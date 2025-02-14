@@ -62,7 +62,21 @@ Create official packages for release
 git clone https://github.com/yourusername/netmap.git
 cd netmap
  ```
-2.	Create a virtual environment (optional but recommended):
+2.  Install C++ libraries
+	
+	Mac-OS
+	``` bash
+	brew install boost nlohmann-json
+	```
+
+	Debian
+	``` bash
+	sudo apt install nlohmann-json3-dev boost
+	```
+
+	-- the boost library is required for the ASIO library to work with CMake, however ASIO is also included with Clang if you would rather use that
+
+3.	Create a virtual environment (optional but recommended):
   ``` bash
   python3 -m venv venv
   source venv/bin/activate   # For Linux/macOS

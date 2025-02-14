@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import sys
 import os
+import time
 
 DEFAULT_PORT = 12345
 
@@ -32,7 +33,7 @@ def main():
     # Start the server in the current working directory
     server_cmd = f"./backend/build/netmap_backend {port}"
     open_terminal(server_cmd)
-
+    time.sleep(0.5)
     if not args.server_only:
         if not args.no_cli:
             cli_cmd = f"python3 ./frontend/cli.py --port {port}"

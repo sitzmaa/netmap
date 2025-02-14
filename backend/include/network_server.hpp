@@ -16,8 +16,14 @@ public:
     void start();
 
 private:
-    // Handle each client connection
+    // Handle client connection and determine type
     void handle_client(tcp::socket socket);
+
+    // Handle CLI-specific communication
+    void handle_cli(tcp::socket socket);
+
+    // Handle GUI-specific communication
+    void handle_gui(tcp::socket socket);
 
     // Send response to the client
     void send_response(tcp::socket& socket, const std::string& response);
