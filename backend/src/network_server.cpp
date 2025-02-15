@@ -1,5 +1,7 @@
 #include "network_server.hpp"
 #include "commands.hpp"  // Universal import for all command header files
+#include "network_scanner.hpp"
+#include "network_state.hpp"
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -17,10 +19,11 @@ std::vector<std::string> parse_command(const std::string& input) {
 }
 
 NetworkServer::NetworkServer(short port) 
-    : io_context(), acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {}
+    : io_context(), acceptor(io_context, tcp::endpoint(tcp::v4(), port)), port(port) {}
 
 void NetworkServer::start() {
-    std::cout << "Server started, listening on port 12345..." << std::endl;
+    std::cout << "Server started, listening on port" << port << "..." << std::endl;
+    network_state.load_state();
     while (true) {
         tcp::socket socket(io_context);
         acceptor.accept(socket);
@@ -83,7 +86,7 @@ void NetworkServer::handle_cli(tcp::socket socket) {
                 response = Traceroute::run(args);
             } 
             else if (cmd == "nmap") {
-                response = Nmap::run(args);
+                Nmap::run(args);
             }
             else if (cmd == "dig") {
                 response = Dig::run(args);

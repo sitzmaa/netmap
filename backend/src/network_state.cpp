@@ -1,103 +1,68 @@
-#include "network_state.h"
+#include "network_state.hpp"
 #include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
-
-
-// Add a node to the network
-void NetworkState::addNode(const Node& node) {
-    if (nodes.find(node.getPublicIP()) == nodes.end()) {
-        nodes[node.getPublicIP()] = node;
+void NetworkState::add_scan_result(const ScanPayload& payload) {
+    if (nodes.find(payload.ip) == nodes.end()) {
+        nodes[payload.ip] = {payload.ip, payload.mac_address, payload.domain, payload.os, payload.open_ports, {}};
     } else {
-        std::cerr << "Node with IP " << node.getPublicIP() << " already exists.\n";
+        Node& node = nodes[payload.ip];
+        if (!payload.mac_address.empty()) node.mac_address = payload.mac_address;
+        if (!payload.domain.empty()) node.domain = payload.domain;
+        if (!payload.os.empty()) node.os = payload.os;
+        if (!payload.open_ports.empty()) node.open_ports = payload.open_ports;
     }
 }
 
-// Add a connection between two nodes
-void NetworkState::addConnection(const std::string& ip1, const std::string& ip2) {
-    if (nodes.find(ip1) == nodes.end() || nodes.find(ip2) == nodes.end()) {
-        std::cerr << "Error: One or both nodes not found.\n";
-        return;
-    }
-    connections[ip1].push_back(ip2);
-    connections[ip2].push_back(ip1);
+void NetworkState::add_connection(const std::string& ip1, const std::string& ip2) {
+    nodes[ip1].connections.push_back(ip2);
+    nodes[ip2].connections.push_back(ip1);
 }
 
-// Retrieve a node by public IP
-Node* NetworkState::getNode(const std::string& public_ip) {
-    if (nodes.find(public_ip) != nodes.end()) {
-        return &nodes[public_ip];
-    }
-    return nullptr;
-}
-
-// Get connections for a given node
-std::vector<std::string> NetworkState::getConnections(const std::string& public_ip) {
-    if (connections.find(public_ip) != connections.end()) {
-        return connections[public_ip];
-    }
-    return {};
-}
-
-// Convert NetworkState to JSON format
-std::string NetworkState::toJSON() const {
-    json json_data;
+void NetworkState::save_state() {
+    json j;
     for (const auto& [ip, node] : nodes) {
-        json_data["nodes"][ip] = {
-            {"public_ip", node.getPublicIP()},
-            {"local_ip", node.getLocalIP()},
-            {"domain", node.getDomain()},
-            {"mac_address", node.getMacAddress()},
-        };
+        j[ip] = node.to_json();
     }
-
-    for (const auto& [ip, conn_list] : connections) {
-        json_data["connections"][ip] = conn_list;
+    std::ofstream file(state_file);
+    if (file.is_open()) {
+        file << j.dump(4);
+        file.close();
+    } else {
+        std::cerr << "Failed to save network state." << std::endl;
     }
-
-    return json_data.dump(4); // Pretty print with 4-space indentation
 }
 
-// Save network state to a JSON file
-void NetworkState::saveToFile(const std::string& filename) {
-    std::ofstream file(filename);
-    if (!file) {
-        std::cerr << "Error opening file for writing: " << filename << "\n";
-        return;
+void NetworkState::load_state() {
+    std::ifstream file(state_file);
+    if (file.is_open()) {
+        json j;
+        file >> j;
+        file.close();
+        
+        for (auto& [ip, data] : j.items()) {
+            Node node;
+            node.public_ip = data["public_ip"].get<std::string>();
+            node.mac_address = data["mac_address"].get<std::string>();
+            node.domain = data["domain"].get<std::string>();
+            node.os = data["os"].get<std::string>();
+            node.open_ports = data["open_ports"].get<std::vector<int>>();
+            node.connections = data["connections"].get<std::vector<std::string>>();
+            nodes[ip] = node;
+        }
     }
-    file << toJSON();
-    file.close();
 }
 
-// Load network state from a JSON file
-void NetworkState::loadFromFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "Error opening file for reading: " << filename << "\n";
-        return;
-    }
-
-    json json_data;
-    file >> json_data;
-    file.close();
-
-    nodes.clear();
-    connections.clear();
-
-    // Load nodes
-    for (const auto& [ip, node_data] : json_data["nodes"].items()) {
-        nodes[ip] = Node(
-            node_data["public_ip"],
-            node_data["local_ip"],
-            node_data["domain"],
-            node_data["mac_address"]
-        );
-    }
-
-    // Load connections
-    for (const auto& [ip, conn_list] : json_data["connections"].items()) {
-        connections[ip] = conn_list.get<std::vector<std::string>>();
+void NetworkState::print_state() const {
+    for (const auto& [ip, node] : nodes) {
+        std::cout << "Node IP: " << ip << "\n";
+        std::cout << "  MAC: " << node.mac_address << "\n";
+        std::cout << "  Domain: " << node.domain << "\n";
+        std::cout << "  OS: " << node.os << "\n";
+        std::cout << "  Open Ports: ";
+        for (int port : node.open_ports) std::cout << port << " ";
+        std::cout << "\n  Connections: ";
+        for (const auto& conn : node.connections) std::cout << conn << " ";
+        std::cout << "\n\n";
     }
 }
