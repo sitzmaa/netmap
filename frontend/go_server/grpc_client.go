@@ -7,8 +7,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	"your_project_path/proto" // replace with the correct path to your generated proto files
-)
+	"netmap/proto" 
 
 const (
 	serverAddress = "localhost:50051" // Python gRPC server address

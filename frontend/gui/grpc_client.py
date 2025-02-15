@@ -1,10 +1,13 @@
 import grpc
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), 'proto'))
 import proto.netmap_pb2
 import proto.netmap_pb2_grpc
 
 class NetworkClient:
     def __init__(self, channel):
-        self.client = proto.netmap_pb2_grpc.NetworkServiceStub(channel)
+        self.client = proto.netmap_pb2_grpc.NetMapStub(channel)
 
     def send_network_data(self, network_data):
         request = proto.netmap_pb2.NetworkDataRequest(network_data=network_data)

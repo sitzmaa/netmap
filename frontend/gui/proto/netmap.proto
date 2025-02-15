@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package netmap;
+
+// Add the Go import path for the generated code
+option go_package = "./proto;proto";  // Adjust this path based on your folder structure
+
+// Define the NetworkDataRequest message
+message NetworkDataRequest {
+    string network_data = 1;
+}
+
+// Define the NetworkDataResponse message
+message NetworkDataResponse {
+    string message = 1;
+}
+
+// Define the service
+service NetMap {
+    rpc SendNetworkData(NetworkDataRequest) returns (NetworkDataResponse);
+}
