@@ -26,7 +26,8 @@ if _version_not_supported:
 
 
 class NetMapStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the service
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -34,28 +35,18 @@ class NetMapStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetState = channel.unary_unary(
-                '/netmap.NetMap/GetState',
-                request_serializer=netmap__pb2.Request.SerializeToString,
-                response_deserializer=netmap__pb2.Response.FromString,
-                _registered_method=True)
-        self.SubscribeUpdates = channel.stream_stream(
-                '/netmap.NetMap/SubscribeUpdates',
-                request_serializer=netmap__pb2.Request.SerializeToString,
-                response_deserializer=netmap__pb2.Response.FromString,
+        self.SendNetworkData = channel.unary_unary(
+                '/netmap.NetMap/SendNetworkData',
+                request_serializer=netmap__pb2.NetworkDataRequest.SerializeToString,
+                response_deserializer=netmap__pb2.NetworkDataResponse.FromString,
                 _registered_method=True)
 
 
 class NetMapServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the service
+    """
 
-    def GetState(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def SubscribeUpdates(self, request_iterator, context):
+    def SendNetworkData(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -64,15 +55,10 @@ class NetMapServicer(object):
 
 def add_NetMapServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetState': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetState,
-                    request_deserializer=netmap__pb2.Request.FromString,
-                    response_serializer=netmap__pb2.Response.SerializeToString,
-            ),
-            'SubscribeUpdates': grpc.stream_stream_rpc_method_handler(
-                    servicer.SubscribeUpdates,
-                    request_deserializer=netmap__pb2.Request.FromString,
-                    response_serializer=netmap__pb2.Response.SerializeToString,
+            'SendNetworkData': grpc.unary_unary_rpc_method_handler(
+                    servicer.SendNetworkData,
+                    request_deserializer=netmap__pb2.NetworkDataRequest.FromString,
+                    response_serializer=netmap__pb2.NetworkDataResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -83,10 +69,11 @@ def add_NetMapServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class NetMap(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the service
+    """
 
     @staticmethod
-    def GetState(request,
+    def SendNetworkData(request,
             target,
             options=(),
             channel_credentials=None,
@@ -99,36 +86,9 @@ class NetMap(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/netmap.NetMap/GetState',
-            netmap__pb2.Request.SerializeToString,
-            netmap__pb2.Response.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def SubscribeUpdates(request_iterator,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.stream_stream(
-            request_iterator,
-            target,
-            '/netmap.NetMap/SubscribeUpdates',
-            netmap__pb2.Request.SerializeToString,
-            netmap__pb2.Response.FromString,
+            '/netmap.NetMap/SendNetworkData',
+            netmap__pb2.NetworkDataRequest.SerializeToString,
+            netmap__pb2.NetworkDataResponse.FromString,
             options,
             channel_credentials,
             insecure,

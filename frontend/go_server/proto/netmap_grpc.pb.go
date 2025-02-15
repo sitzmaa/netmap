@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: netmap.proto
+// source: proto/netmap.proto
 
-package netmap
+package proto
 
 import (
 	context "context"
@@ -19,16 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NetMap_GetState_FullMethodName         = "/netmap.NetMap/GetState"
-	NetMap_SubscribeUpdates_FullMethodName = "/netmap.NetMap/SubscribeUpdates"
+	NetMap_SendNetworkData_FullMethodName = "/netmap.NetMap/SendNetworkData"
 )
 
 // NetMapClient is the client API for NetMap service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Define the service
 type NetMapClient interface {
-	GetState(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
-	SubscribeUpdates(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Request, Response], error)
+	SendNetworkData(ctx context.Context, in *NetworkDataRequest, opts ...grpc.CallOption) (*NetworkDataResponse, error)
 }
 
 type netMapClient struct {
@@ -39,35 +39,23 @@ func NewNetMapClient(cc grpc.ClientConnInterface) NetMapClient {
 	return &netMapClient{cc}
 }
 
-func (c *netMapClient) GetState(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *netMapClient) SendNetworkData(ctx context.Context, in *NetworkDataRequest, opts ...grpc.CallOption) (*NetworkDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Response)
-	err := c.cc.Invoke(ctx, NetMap_GetState_FullMethodName, in, out, cOpts...)
+	out := new(NetworkDataResponse)
+	err := c.cc.Invoke(ctx, NetMap_SendNetworkData_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *netMapClient) SubscribeUpdates(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Request, Response], error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &NetMap_ServiceDesc.Streams[0], NetMap_SubscribeUpdates_FullMethodName, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &grpc.GenericClientStream[Request, Response]{ClientStream: stream}
-	return x, nil
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type NetMap_SubscribeUpdatesClient = grpc.BidiStreamingClient[Request, Response]
-
 // NetMapServer is the server API for NetMap service.
 // All implementations must embed UnimplementedNetMapServer
 // for forward compatibility.
+//
+// Define the service
 type NetMapServer interface {
-	GetState(context.Context, *Request) (*Response, error)
-	SubscribeUpdates(grpc.BidiStreamingServer[Request, Response]) error
+	SendNetworkData(context.Context, *NetworkDataRequest) (*NetworkDataResponse, error)
 	mustEmbedUnimplementedNetMapServer()
 }
 
@@ -78,11 +66,8 @@ type NetMapServer interface {
 // pointer dereference when methods are called.
 type UnimplementedNetMapServer struct{}
 
-func (UnimplementedNetMapServer) GetState(context.Context, *Request) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetState not implemented")
-}
-func (UnimplementedNetMapServer) SubscribeUpdates(grpc.BidiStreamingServer[Request, Response]) error {
-	return status.Errorf(codes.Unimplemented, "method SubscribeUpdates not implemented")
+func (UnimplementedNetMapServer) SendNetworkData(context.Context, *NetworkDataRequest) (*NetworkDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNetworkData not implemented")
 }
 func (UnimplementedNetMapServer) mustEmbedUnimplementedNetMapServer() {}
 func (UnimplementedNetMapServer) testEmbeddedByValue()                {}
@@ -105,30 +90,23 @@ func RegisterNetMapServer(s grpc.ServiceRegistrar, srv NetMapServer) {
 	s.RegisterService(&NetMap_ServiceDesc, srv)
 }
 
-func _NetMap_GetState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
+func _NetMap_SendNetworkData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NetworkDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NetMapServer).GetState(ctx, in)
+		return srv.(NetMapServer).SendNetworkData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NetMap_GetState_FullMethodName,
+		FullMethod: NetMap_SendNetworkData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NetMapServer).GetState(ctx, req.(*Request))
+		return srv.(NetMapServer).SendNetworkData(ctx, req.(*NetworkDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
-
-func _NetMap_SubscribeUpdates_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(NetMapServer).SubscribeUpdates(&grpc.GenericServerStream[Request, Response]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type NetMap_SubscribeUpdatesServer = grpc.BidiStreamingServer[Request, Response]
 
 // NetMap_ServiceDesc is the grpc.ServiceDesc for NetMap service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -138,17 +116,10 @@ var NetMap_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*NetMapServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetState",
-			Handler:    _NetMap_GetState_Handler,
+			MethodName: "SendNetworkData",
+			Handler:    _NetMap_SendNetworkData_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "SubscribeUpdates",
-			Handler:       _NetMap_SubscribeUpdates_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-	},
-	Metadata: "netmap.proto",
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/netmap.proto",
 }

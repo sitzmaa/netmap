@@ -36,11 +36,14 @@ def main():
     time.sleep(0.5)
     if not args.server_only:
         if not args.no_cli:
-            cli_cmd = f"./frontend/netmap_cli/build/netmap_cli -H localhost {port}"
+            cli_cmd = f"./frontend/netmap_cli/build/netmap_cli -H localhost -p {port}"
             open_terminal(cli_cmd)
 
         if not args.no_gui:
-            gui_cmd = f"source venv/bin/activate && python3 ./frontend/gui.py --port {port}"
+            go_server_cmd ="cd ./frontend/go_server && go run main.go"
+            open_terminal(go_server_cmd)
+            time.sleep(0.5)
+            gui_cmd = "source venv/bin/activate && python3 ./frontend/gui/main.py"
             open_terminal(gui_cmd)
 
 if __name__ == "__main__":
