@@ -2,6 +2,7 @@
 #define NMAP_X_HPP
 
 #include "commands.hpp"
+#include "network_state.hpp"
 #include <vector>
 #include <string>
 
@@ -14,7 +15,8 @@
 
 class Nmap{
 public:
-    static std::string run(const std::vector<std::string>& args);
+    static std::vector<ScanPayload> run(const std::vector<std::string>& args);
+    static std::vector<ScanPayload> nmap_x(const std::string& target, uint8_t options);
 };
 
 #endif // NMAP_X_HPP

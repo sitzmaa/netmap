@@ -4,6 +4,7 @@
 #include <asio.hpp>
 #include <string>
 #include <thread>
+#include "network_state.hpp"
 
 using asio::ip::tcp;
 
@@ -11,7 +12,6 @@ class NetworkServer {
 public:
     // Constructor takes a port for the server to listen on
     NetworkServer(short port);
-
     // Start the server to listen for incoming connections
     void start();
 
@@ -28,6 +28,8 @@ private:
     // Send response to the client
     void send_response(tcp::socket& socket, const std::string& response);
 
+    NetworkState network_state;
+    short port;
     asio::io_context io_context;
     tcp::acceptor acceptor;
 };

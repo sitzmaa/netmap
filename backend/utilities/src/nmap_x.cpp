@@ -1,7 +1,6 @@
 #include "nmap_x.hpp"
 #include <iostream>
 #include <sstream>
-#include <vector>
 #include <stdexcept>
 #include <unordered_map>
 #include <tinyxml2.h>
@@ -33,9 +32,17 @@ std::string run_nmap(const std::string& target, uint8_t options) {
     return result;
 }
 
-std::vector<std::string> parse_nmap_xml(const std::string& xml_data, uint8_t options) {
+#include "network_state.hpp"
+#include <tinyxml2.h>
+#include <vector>
+#include <string>
+
+using namespace tinyxml2;
+
+std::vector<ScanPayload> parse_nmap_xml(const std::string& xml_data, uint8_t options) {
     XMLDocument doc;
-    std::vector<std::string> results;
+    std::vector<ScanPayload> results;
+
     if (doc.Parse(xml_data.c_str()) != XML_SUCCESS) {
         throw std::runtime_error("Failed to parse XML data from nmap");
     }
@@ -47,12 +54,18 @@ std::vector<std::string> parse_nmap_xml(const std::string& xml_data, uint8_t opt
 
     XMLElement* host = root->FirstChildElement("host");
     while (host) {
+        ScanPayload payload;
+        bool has_data = false;
+
         if (options & NMAP_OPEN_PORT) {
             XMLElement* ports = host->FirstChildElement("ports");
             if (ports) {
                 for (XMLElement* port = ports->FirstChildElement("port"); port; port = port->NextSiblingElement("port")) {
                     const char* port_str = port->Attribute("portid");
-                    if (port_str) results.push_back("Open Port: " + std::string(port_str));
+                    if (port_str) {
+                        payload.open_ports.push_back(std::stoi(port_str)); // Store open port as int
+                        has_data = true;
+                    }
                 }
             }
         }
@@ -60,13 +73,17 @@ std::vector<std::string> parse_nmap_xml(const std::string& xml_data, uint8_t opt
             XMLElement* address = host->FirstChildElement("address");
             if (address) {
                 const char* ip = address->Attribute("addr");
-                if (ip) results.push_back("Public IP: " + std::string(ip));
+                if (ip) {
+                    payload.ip = ip;
+                    has_data = true;
+                }
             }
         }
         if (options & NMAP_MAC_ADDRESS) {
             XMLElement* mac = host->FirstChildElement("address");
             if (mac && mac->Attribute("addrtype", "mac")) {
-                results.push_back("MAC Address: " + std::string(mac->Attribute("addr")));
+                payload.mac_address = mac->Attribute("addr");
+                has_data = true;
             }
         }
         if (options & NMAP_DOMAIN) {
@@ -74,7 +91,10 @@ std::vector<std::string> parse_nmap_xml(const std::string& xml_data, uint8_t opt
             if (hostnames) {
                 for (XMLElement* hostname = hostnames->FirstChildElement("hostname"); hostname; hostname = hostname->NextSiblingElement("hostname")) {
                     const char* domain = hostname->Attribute("name");
-                    if (domain) results.push_back("Domain: " + std::string(domain));
+                    if (domain) {
+                        payload.domain = domain;
+                        has_data = true;
+                    }
                 }
             }
         }
@@ -84,16 +104,25 @@ std::vector<std::string> parse_nmap_xml(const std::string& xml_data, uint8_t opt
                 XMLElement* osmatch = os->FirstChildElement("osmatch");
                 if (osmatch) {
                     const char* os_name = osmatch->Attribute("name");
-                    if (os_name) results.push_back("OS: " + std::string(os_name));
+                    if (os_name) {
+                        payload.os = os_name;
+                        has_data = true;
+                    }
                 }
             }
         }
+
+        // If any data was collected, add it to results
+        if (has_data) {
+            results.push_back(payload);
+        }
+
         host = host->NextSiblingElement("host");
     }
     return results;
 }
 
-std::vector<std::string> nmap_x(const std::string& target, uint8_t options) {
+std::vector<ScanPayload> Nmap::nmap_x(const std::string& target, uint8_t options) {
     try {
         std::string scan_result = run_nmap(target, options);
         return parse_nmap_xml(scan_result, options);
@@ -103,9 +132,10 @@ std::vector<std::string> nmap_x(const std::string& target, uint8_t options) {
     }
 }
 
-std::string Nmap::run(const std::vector<std::string>& args) {
+std::vector<ScanPayload> Nmap::run(const std::vector<std::string>& args) {
     if (args.size() < 2) {
-        return "Usage: nmap_x <target> [options]";
+        std::cerr << "Usage: nmap_x <target> [options]" << std::endl;
+        return {};
     }
 
     std::string target = args[1];
@@ -126,9 +156,20 @@ std::string Nmap::run(const std::vector<std::string>& args) {
         }
     }
 
-    std::vector<std::string> results = nmap_x(target, options);
-    for (const std::string& res : results) {
-        std::cout << res << std::endl;
+    std::vector<ScanPayload> results = nmap_x(target, options);
+
+    // Print out the results (you can modify this to return or save as needed)
+    for (const ScanPayload& payload : results) {
+        std::cout << "IP: " << payload.ip << std::endl;
+        std::cout << "MAC Address: " << payload.mac_address << std::endl;
+        std::cout << "Domain: " << payload.domain << std::endl;
+        std::cout << "OS: " << payload.os << std::endl;
+        std::cout << "Open Ports: ";
+        for (int port : payload.open_ports) {
+            std::cout << port << " ";
+        }
+        std::cout << std::endl;
     }
-    return 0;
+
+    return results; // Return ScanPayloads instead of just strings
 }
