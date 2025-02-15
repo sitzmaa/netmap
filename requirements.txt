@@ -9,6 +9,7 @@ matplotlib==3.10.0
 networkx==3.4.2
 numpy==2.2.3
 packaging==24.2
+path.py==10.6
 pillow==11.1.0
 pluggy==1.5.0
 protobuf==5.29.3
@@ -16,8 +17,11 @@ pyparsing==3.2.1
 PyQt6==6.8.1
 PyQt6-Qt6==6.8.2
 PyQt6_sip==13.10.0
+pyqtgraph==0.13.7
 pytest==8.3.4
 python-dateutil==2.9.0.post0
 scapy==2.6.1
+seed==0.11.3
 setuptools==75.8.0
 six==1.17.0
+wheel==0.45.1
