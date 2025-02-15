@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QLabel,
                              QGraphicsScene, QGraphicsView, QGraphicsEllipseItem, QGraphicsTextItem, QVBoxLayout, QWidget, QLineEdit)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QBrush, QColor
+import seed  # Assuming SEED library is installed
 
 class NetworkNode(QGraphicsEllipseItem):
     def __init__(self, x, y, ip, details):
@@ -58,6 +59,9 @@ class NetworkVisualizerApp(QMainWindow):
         self.backend_thread.new_data.connect(self.update_network)
         self.backend_thread.start()
 
+        # SEED Network Visualization Setup
+        self.network = seed.Network()
+
     def scan_network(self):
         self.backend_thread.send_command("scan")
 
@@ -71,16 +75,39 @@ class NetworkVisualizerApp(QMainWindow):
         self.scene.clear()
         nodes = data.split(";")
         x, y = 50, 50
-        for node_info in nodes:
-            parts = node_info.split(",")
-            if len(parts) >= 2:
-                ip, details = parts[0], parts[1]
-                node = NetworkNode(x, y, ip, details)
-                self.scene.addItem(node)
-                x += 100
-                if x > 800:
-                    x = 50
-                    y += 100
+        
+        # Example static network data for visualization
+        # Normally, this would come from your backend data
+        example_nodes = [
+            {"name": "Node 1", "type": "Router", "ip": "192.168.0.1", "details": "Main Router"},
+            {"name": "Node 2", "type": "Device", "ip": "192.168.0.2", "details": "Device A"},
+            {"name": "Node 3", "type": "Device", "ip": "192.168.0.3", "details": "Device B"}
+        ]
+        example_edges = [
+            {"source": "Node 1", "destination": "Node 2"},
+            {"source": "Node 1", "destination": "Node 3"}
+        ]
+        
+        # Add nodes to SEED network (for visualization)
+        for node_info in example_nodes:
+            self.network.add_node(node_info['name'], **node_info)
+
+        # Add edges to SEED network
+        for edge in example_edges:
+            self.network.add_edge(edge['source'], edge['destination'])
+        
+        # Visualization with SEED
+        self.network.display()
+        
+        # Also adding graphical elements to PyQt6's QGraphicsView
+        for node_info in example_nodes:
+            ip, details = node_info['ip'], node_info['details']
+            node = NetworkNode(x, y, ip, details)
+            self.scene.addItem(node)
+            x += 100
+            if x > 800:
+                x = 50
+                y += 100
 
 class BackendThread(QThread):
     new_data = pyqtSignal(str)

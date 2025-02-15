@@ -42,7 +42,7 @@ def main():
         if not args.no_gui:
             go_server_cmd ="cd ./frontend/go_server && go run main.go"
             open_terminal(go_server_cmd)
-            time.sleep(0.5)
+            time.sleep(2)
             gui_cmd = "source venv/bin/activate && python3 ./frontend/gui/main.py"
             open_terminal(gui_cmd)
 
