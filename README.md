@@ -72,12 +72,12 @@ cd netmap
 	
 	Mac-OS
 	``` bash
-	brew install boost nlohmann-json tinyxml2
+	brew install boost nlohmann-json tinyxml2 go protobuf
 	```
 
 	Debian
 	``` bash
-	sudo apt install nlohmann-json3-dev boost libtinyxml2.6.2-dev
+	sudo apt install -y nlohmann-json3-dev boost libtinyxml2.6.2-dev protobuf-compiler
 	```
 
 	-- the boost library is required for the ASIO library to work with CMake, however ASIO is also included with Clang if you would rather use that
