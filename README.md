@@ -65,7 +65,7 @@ Currently the persistant storage is in the form of JSON
 ## Installation
 1.	Clone the repository:
  ``` bash
-git clone https://github.com/yourusername/netmap.git
+git clone https://github.com/sitzmaa/netmap
 cd netmap
  ```
 2.  Install C++ libraries
